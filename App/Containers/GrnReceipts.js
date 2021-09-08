@@ -63,57 +63,57 @@ class GrnReceipts extends Component {
     //api = {};
     
     const environment = await Utils.retrieveDataFromAsyncStorage("ENVIRONMENT");
-    console.tron.log("Environment Variable (API) ", environment);
-    //console.tron.log("Original baseURL", API.create(baseURL));
+    console.log("Environment Variable (API) ", environment);
+    //console.log("Original baseURL", API.create(baseURL));
    // envURL = "";
     if (environment == 'SKAD3')
     {
-      console.tron.log("INTO IF");
+      console.log("INTO IF");
       envURL = "https://skad3a1-skanskapaas.inoappsproducts.com/ords/inoapps_ec/";
-      console.tron.log("New ENV URL ", envURL);
+      console.log("New ENV URL ", envURL);
       //this.api = new API.create(envURL);
-      console.tron.log(this.api, "LETS GOOOO");
+      console.log(this.api, "LETS GOOOO");
       
     }else if (environment == 'SKAD2'){
       envURL = "https://skad2a1-skanskapaas.inoappsproducts.com/ords/inoapps_ec/";
-      console.tron.log("New ENV URL ", envURL);
+      console.log("New ENV URL ", envURL);
      // this.api = new API.create(envURL);
 
     }else if (environment == 'SKAD1'){
       envURL = "https://skad1a1-skanskapaas.inoappsproducts.com/ords/inoapps_ec/";
-      console.tron.log("New ENV URL ", envURL);
+      console.log("New ENV URL ", envURL);
       //this.api = new API.create(envURL);
 
   }else if (environment == 'SKAT1'){
     envURL = "https://skat1a1-skanskapaas.inoappsproducts.com/ords/inoapps_ec/";
-    console.tron.log("New ENV URL ", envURL);
+    console.log("New ENV URL ", envURL);
     //this.api = new API.create(envURL);
 
   }else if (environment == 'PTEST2'){
     envURL = "https://ptest2a1-inoapps4.inoapps.com/ords/inoapps_ec/";
-    console.tron.log("New ENV URL ", envURL);
+    console.log("New ENV URL ", envURL);
     //this.api = new API.create(envURL);
 
   }else if (environment == 'PDEV2'){
     envURL = "https://pdev2a1-inoapps4.inoapps.com/ords/inoapps_ec/";
    // this.api = new API.create(envURL);
-    console.tron.log("New ENV URL RECEIPTS ", envURL);
+    console.log("New ENV URL RECEIPTS ", envURL);
 
   }else if (environment == 'PTEST1'){
     envURL = "https://ptest1a1-inoapps4.inoapps.com/ords/inoapps_ec/";
    // this.api = new API.create(envURL);
-    console.tron.log("New ENV URL RECEIPTS ", envURL);
+    console.log("New ENV URL RECEIPTS ", envURL);
   }
 
 
 
 
     const api = API.create(envURL);
-    console.tron.log("New ENV URL RECEIPTS WORKING??? ", envURL);
+    console.log("New ENV URL RECEIPTS WORKING??? ", envURL);
     const username = await Utils.retrieveDataFromAsyncStorage("USER_NAME");
     const response = await api.getReceipts(username);
     const receipts = response.data.items;
-    console.tron.log("Receipts: ", receipts);
+    console.log("Receipts: ", receipts);
 
     // Save to DB
     await DBGrnReceiptDataHelper.saveReceipts(receipts);
@@ -136,7 +136,7 @@ class GrnReceipts extends Component {
     });
         // Retrieve from DB
     let dbReceipts = await DBGrnReceiptDataHelper.getReceipts();
-    console.tron.log("DB r: ", dbReceipts);
+    console.log("DB r: ", dbReceipts);
 
         dbReceipts.map((receipt) => {
           if (receipt.quantity > 0) {
@@ -299,7 +299,7 @@ class GrnReceipts extends Component {
       <View style={styles.container}>
       <NavigationEvents
           onWillFocus={payload => {
-            console.tron.log("will focus", payload);
+            console.log("will focus", payload);
             this.refreshPayload();
           }}
         />
