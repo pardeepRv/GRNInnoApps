@@ -13,11 +13,11 @@ const GrnPurchaseOrderStack = StackNavigator({
         screen: GrnPurchaseOrder,
         navigationOptions:({navigation}) => ({
             title: "ORDERS",
-            headerLeft:(
-              <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
-                <IOSIcon style={styles.menuButton} name="ios-menu" size={30} />
-              </TouchableOpacity>
-            ),
+            // headerLeft:(
+            //   <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
+            //     <IOSIcon style={styles.menuButton} name="ios-menu" size={30} />
+            //   </TouchableOpacity>
+            // ),
         })
     },
     GrnPurchaseOrderDetails: {

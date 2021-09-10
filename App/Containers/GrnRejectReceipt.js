@@ -663,6 +663,7 @@ class GrnRejectReceipt extends Component {
                     onChangeText={(comment) => this.setState({ comment })}
                     multiline={true}
                     marginTop={10}
+                    maxLength={40}
                     marginBottom={15}
                     marginLeft={5}
                     fontSize={12}

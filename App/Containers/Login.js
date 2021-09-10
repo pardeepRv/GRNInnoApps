@@ -46,9 +46,13 @@ class Login extends Component {
       // password: "Skanska123",
       // environment: "SKAD3",
 
-      username: "",
-      password: "",
-      environment: "",
+       username: "Products.User",
+      password: "Welcome41",
+      environment: "PDEV2",
+
+      // username: "",
+      // password: "",
+      // environment: "",
       envURL: "",
       isLoading: false,
       isChecked: false,
@@ -179,7 +183,6 @@ class Login extends Component {
   // MARK: API
 
   getLogin(envURL) {
-    debugger;
     if (envURL == "https://www.google.com") {
       return alert("Please enter right Environment!");
     }

@@ -4,22 +4,22 @@ let Utils = {
 
   // MARK: AsyncStorage
   async storeDataToAsyncStorage(key, data) {
-    console.tron.log('AsyncStorage: Hit store data')
+    console.log('AsyncStorage: Hit store data')
     try {
       await AsyncStorage.setItem(key, JSON.stringify(data));
     } catch (error) {
       // Error saving data
-      console.tron.log('AsyncStorage: error saving data')
+      console.log('AsyncStorage: error saving data')
     }
     return
   },
 
   async retrieveDataFromAsyncStorage(key) {
-    console.tron.log('AsyncStorage: Hit retrieve data')
+    console.log('AsyncStorage: Hit retrieve data')
 
     try {
       const value = await this.retrieveItem(key)
-      console.tron.log('AsyncStorage: ok ', value)
+      console.log('AsyncStorage: ok ', value)
 
       // Hard code to return small caps if this is for username
       if (key == 'USER_NAME') {
@@ -28,19 +28,19 @@ let Utils = {
         return value
       }
     } catch (error) {
-      console.tron.log('AsyncStorage: error retrieving data ' + error)
+      console.log('AsyncStorage: error retrieving data ' + error)
     }
     return
   },
 
   async removeItemValue(key) {
-    console.tron.log('AsyncStorage: Hit remove data')
+    console.log('AsyncStorage: Hit remove data')
    try {
      await AsyncStorage.removeItem(key);
      return true;
    }
    catch(exception) {
-       console.tron.log('AsyncStorage: error removing data' + exception)
+       console.log('AsyncStorage: error removing data' + exception)
      return false;
    }
  },
@@ -51,7 +51,7 @@ let Utils = {
       const item = JSON.parse(retrievedItem);
       return item;
     } catch (error) {
-      console.tron.log(error.message);
+      console.log(error.message);
     }
     return
   },
@@ -69,7 +69,7 @@ let Utils = {
 
   calculateQuantity: function(amount, uom) {
 
-    console.tron.log('Calculate Quantity UOM', uom)
+    console.log('Calculate Quantity UOM', uom)
     if (uom == 'EA' || uom == 'LF') {
       amount = 1
     }

@@ -25,6 +25,7 @@ import styles from './Styles/GrnReceiptDetailsStyle'
 import CreateReceiptsAPIHelper from "../APIHelper/CreateReceiptsAPIHelper";
 import FJSON from "format-json";
 import API from "../../App/Services/Api";
+import EnvironmentVar from '../Config/EnvironmentVar';
 
 class GrnReceiptDetails extends Component {
 
@@ -44,12 +45,13 @@ class GrnReceiptDetails extends Component {
       img: null,
       isChecked: true,
       index: props.navigation.state.params.index,
+      // enVar: props.navigation.state.params.envUrl,
     }
 
-    this.api = API.create();
+    this.api = API.create(props.navigation.state.params.envUrl);
 
-
-    console.tron.log("entity Purchase Order Receipt: ", this.state.entityPurchaseOrder);
+    console.log('sending to api >>>>>>>>>.',props.navigation.state.params.envUrl);
+    console.log("entity Purchase Order Receipt: ", this.state.entityPurchaseOrder);
   }
 
   static navigationOptions = ({navigation}) => {
@@ -68,6 +70,21 @@ class GrnReceiptDetails extends Component {
   };
 
   componentDidMount() {
+
+    // EnvironmentVar()
+    // .then((res) => {
+    //   console.log("getting ENV in orderDetails", res);
+    //   // this.setState({
+    //   //   envUrl: res,
+    //   // });
+    //   if(res !=""){
+    //     API.create(res);
+    //   }
+    // })
+    // .catch((err) => {
+    //   console.log("IN error", err);
+    // });
+
     this.props.navigation.setParams({submitReceipt: this._submitReceipt})
 
 
@@ -126,7 +143,7 @@ class GrnReceiptDetails extends Component {
       );
 
     }else{
-      console.tron.log("Submit receipt");
+      console.log("Submit receipt");
       if (isNaN(this.state.quantity) || this.state.quantity == 0){
           this.showAlertMessage("Please enter a valid quantity.");
       }else{
@@ -149,7 +166,7 @@ class GrnReceiptDetails extends Component {
 
     }else{
       let receipt = this.state.entityPurchaseOrder
-      console.tron.log("receipt organization", receipt.to_organization)
+      console.log("receipt organization", receipt.to_organization)
         this.postCreateReceipt(receipt.order_number, receipt.order_line_number,
           parseFloat(this.state.quantity), receipt.unit_of_measure, receipt.to_organization_id,
            receipt.to_organization, this.state.comments, receipt.type,
@@ -233,7 +250,7 @@ class GrnReceiptDetails extends Component {
       file_id,
       distribution_number)
 
-    console.tron.log("Post Create Receipt 1", receipt);
+    console.log("Post Create Receipt 1", receipt);
 
     await DBGrnPurchaseOrderDataHelper.updateCreateReceiptStatus(
       receipt.order_number,
@@ -244,12 +261,12 @@ class GrnReceiptDetails extends Component {
       new Date(),
       receipt.quantity);
 
-    console.tron.log("Post Create Receipt 2");
+    console.log("Post Create Receipt 2");
 
     const username = await Utils.retrieveDataFromAsyncStorage("USER_NAME");
 
-    console.tron.log("PRINT FINAL RECEIPT:", [receipt])
-    const response = await CreateReceiptsAPIHelper.postCreateReceipt(username, [receipt]);
+    console.log("PRINT FINAL RECEIPT:", [receipt])
+    const response = await CreateReceiptsAPIHelper.postCreateReceipt(username, [receipt],this.props.navigation.state.params.envUrl);
 
     this.setState({isLoading: false});
 
@@ -257,12 +274,12 @@ class GrnReceiptDetails extends Component {
       if (response.ok) {
         this.props.navigation.state.params.refreshStatus("processing",this.state.index)
         this.submitSuccessfulAlert()
-        console.tron.log("Response API ok: ", response.data);
+        console.log("Response API ok: ", response.data);
 
       } else {
         this.props.navigation.state.params.refreshStatus("pending",this.state.index)
         this.submitFailedAlert();
-        console.tron.log("Response API: failed", response.status + " - " + response.problem);
+        console.log("Response API: failed", response.status + " - " + response.problem);
       }
     }, 100)
   };
@@ -333,14 +350,14 @@ class GrnReceiptDetails extends Component {
     };
 
     ImagePicker.showImagePicker(options, (response) => {
-      console.tron.log('Response = ', response);
+      console.log('Response = ', response);
 
       if (response.didCancel) {
-        console.tron.log('User cancelled photo picker');
+        console.log('User cancelled photo picker');
       } else if (response.error) {
-        console.tron.log('ImagePicker Error: ', response.error);
+        console.log('ImagePicker Error: ', response.error);
       } else if (response.customButton) {
-        console.tron.log('User tapped custom button: ', response.customButton);
+        console.log('User tapped custom button: ', response.customButton);
       } else {
         let source = {
           uri: response.uri
@@ -349,7 +366,7 @@ class GrnReceiptDetails extends Component {
         this.photoURI = source.uri;
         this.data = new FormData();
         this.data.append('photo', {
-          uri: source,
+          uri: response.uri,
           type: 'image/jpeg', // or photo.type
           name: 'testPhotoName'
         });
@@ -360,9 +377,8 @@ class GrnReceiptDetails extends Component {
   }
 
   async sendFile() {
-
     this.setState({isLoading: true});
-    console.tron.log("Image data", this.data);
+    console.log("Image data", this.data);
 
     const username = await Utils.retrieveDataFromAsyncStorage("USER_NAME");
     const params = [username, 'testPhotoName', this.data];
@@ -372,14 +388,14 @@ class GrnReceiptDetails extends Component {
 
     setTimeout(async () => {
       if (result.ok) {
-        console.tron.log("Response API ok: ", result.data);
+        console.log("Response API ok: ", result.data);
         this.file_id = result.data.REQUEST_ID;
 
-          console.tron.log("updated file id : ", this.file_id)
-          console.tron.log("updated receipt_id : ", this.receipt_id)
+          console.log("updated file id : ", this.file_id)
+          console.log("updated receipt_id : ", this.receipt_id)
         //update file id to local
         let updatedReceipt = await this.updateCreateReceiptFile(this.receipt_id, this.file_id);
-        console.tron.log("updated Receipt data: ", updatedReceipt)
+        console.log("updated Receipt data: ", updatedReceipt)
         //call change receipt API
         this.postCreateReceipt(updatedReceipt.order_number, updatedReceipt.order_line_number,
           updatedReceipt.quantity, updatedReceipt.unit_of_measure,updatedReceipt.to_organization_id,
@@ -389,13 +405,14 @@ class GrnReceiptDetails extends Component {
       } else {
         this.props.navigation.state.params.refreshStatus("pending",this.state.index)
         this.submitFailedAlert();
-        console.tron.log("Response API: failed", result.status + " - " + result.problem);
+        console.log("Response API: failed", result.status + " - " + result.problem);
       }
     }, 100)
   }
 
   render() {
-    if (this.state.entityPurchaseOrder.submitStatus == "processing" || this.state.entityPurchaseOrder.submitStatus == "pending"){
+    // || this.state.entityPurchaseOrder.submitStatus == "pending"
+    if (this.state.entityPurchaseOrder.submitStatus == "processing" ){
       return (<View style={styles.container}>
         <Spinner visible={this.state.isLoading} />
 
@@ -454,6 +471,7 @@ class GrnReceiptDetails extends Component {
                   <TextInput style={styles.input} value={this.state.comments} placeholder='ADD COMMENTS'
                   onChangeText={text => this.setState({comments: text})} multiline={true} editable={false} selectTextOnFocus={false}
                     marginTop={10}
+                    maxLength={40}
                     marginBottom={15}
                     marginLeft={5}
                     fontSize={12}
@@ -542,6 +560,7 @@ class GrnReceiptDetails extends Component {
                   <TextInput style={styles.input} value={this.state.comments} placeholder='ADD COMMENTS'
                   onChangeText={text => this.setState({comments: text})}   multiline={true}
                     marginTop={10}
+                    maxLength={40}
                     marginBottom={15}
                     marginLeft={5}
                     fontSize={12}

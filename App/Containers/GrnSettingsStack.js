@@ -11,11 +11,11 @@ const GrnSettingsStack = StackNavigator({
         screen: GrnSettings,
         navigationOptions:({navigation}) => ({
             title: "SETTINGS",
-            headerLeft:(
-              <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
-                <IOSIcon style={styles.menuButton} name="ios-menu" size={30} />
-              </TouchableOpacity>
-            )
+            // headerLeft:(
+            //   <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
+            //     <IOSIcon style={styles.menuButton} name="ios-menu" size={30} />
+            //   </TouchableOpacity>
+            // )
         })
     }
 })

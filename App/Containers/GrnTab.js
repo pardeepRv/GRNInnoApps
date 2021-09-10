@@ -9,17 +9,17 @@ import GrnSettingsStack from './GrnSettingsStack';
 import { Images } from '../Themes'
 
 const GrnTab = createBottomTabNavigator({
-  GrnHomeStack: {
-    screen: GrnHomeStack,
-    navigationOptions: {
-      tabBarLabel: 'Home',
-      tabBarIcon: ({tintColor}) => (<Image source={Images.home} style={{
-          height: 24,
-          width: 24,
-          tintColor: tintColor
-        }}/>)
-    }
-  },
+  // GrnHomeStack: {
+  //   screen: GrnHomeStack,
+  //   navigationOptions: {
+  //     tabBarLabel: 'Home',
+  //     tabBarIcon: ({tintColor}) => (<Image source={Images.home} style={{
+  //         height: 24,
+  //         width: 24,
+  //         tintColor: tintColor
+  //       }}/>)
+  //   }
+  // },
   GrnPurchaseOrderStack: {
     screen: GrnPurchaseOrderStack,
     navigationOptions: {

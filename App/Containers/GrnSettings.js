@@ -33,16 +33,16 @@ class GrnSettings extends Component {
       username: "",
       isLoading: false,
       envUrl: "",
-      environment:''
+      environment: "",
     };
   }
   async componentDidMount() {
     const environment = await Utils.retrieveDataFromAsyncStorage("ENVIRONMENT");
 
-    console.log(environment,'environmentenvironmentenvironment');
+    console.log(environment, "environmentenvironmentenvironment");
     this.setState({
       isLoading: true,
-      environment:environment
+      environment: environment,
     });
     EnvironmentVar()
       .then((res) => {
@@ -77,6 +77,12 @@ class GrnSettings extends Component {
     );
   };
 
+  navigateBackToLogin = async () => {
+    await Utils.removeItemValue("USER_NAME");
+    await Utils.removeItemValue("ENVIRONMENT");
+    this.props.navigation.navigate("Login");
+  };
+
   navigateBackToLogin = () => {
     return this.props.navigation.navigate("Login");
 
@@ -102,7 +108,7 @@ class GrnSettings extends Component {
   render() {
     const appVersion = DeviceInfo.getVersion();
     const buildNumber = DeviceInfo.getBuildNumber();
-    const { envUrl,environment } = this.state;
+    const { envUrl, environment } = this.state;
     return (
       <SafeAreaView style={styles.container}>
         <Spinner

@@ -14,11 +14,11 @@ const GrnReceiptsStack = StackNavigator({
         screen: GrnReceipts,
         navigationOptions:({navigation}) => ({
             title: "MANAGE RECEIPTS",
-            headerLeft:(
-              <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
-                <IOSIcon style={styles.menuButton} name="ios-menu" size={30} />
-              </TouchableOpacity>
-            )
+            // headerLeft:(
+            //   <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
+            //     <IOSIcon style={styles.menuButton} name="ios-menu" size={30} />
+            //   </TouchableOpacity>
+            // )
         })
     },
     GrnEditReceipt: {

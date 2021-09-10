@@ -58,8 +58,6 @@ class GrnChangeReceipt extends Component {
     };
   };
 
-
-
   // MARK: Api
   async getEnvVar() {
     const environment = await Utils.retrieveDataFromAsyncStorage("ENVIRONMENT");
@@ -104,7 +102,6 @@ class GrnChangeReceipt extends Component {
       console.log("New ENV URL RECEIPTS ", envURL);
     }
   }
-
 
   componentDidMount() {
     this.getEnvVar();
@@ -441,7 +438,7 @@ class GrnChangeReceipt extends Component {
 
   _submit = () => {
     console.log(this.state.quantity, "this.state.quantity is>>>");
-      console.log(
+    console.log(
       this.state.entityReceipt.quantity - this.state.quantity,
       "this.state.quantity is 111>>>"
     );
@@ -549,6 +546,7 @@ class GrnChangeReceipt extends Component {
                     placeholder="ADD COMMENTS"
                     onChangeText={(comment) => this.setState({ comment })}
                     multiline={true}
+                    maxLength={40}
                     marginTop={10}
                     marginBottom={15}
                     marginLeft={5}

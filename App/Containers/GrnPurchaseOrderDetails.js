@@ -26,6 +26,7 @@ import API from "../../App/Services/Api";
 
 // Styles
 import styles from "./Styles/GrnPurchaseOrderDetailsStyle";
+import EnvironmentVar from "../Config/EnvironmentVar";
 
 class GrnPurchaseOrderDetails extends Component {
 
@@ -49,6 +50,7 @@ class GrnPurchaseOrderDetails extends Component {
         currentNoOfReceiptsToPost: 0,
         entireReceipts:[],
         totalCount:0,
+        envUrl:''
       };
 
 
@@ -73,8 +75,22 @@ class GrnPurchaseOrderDetails extends Component {
   };
 
   componentDidMount() {
+
+    EnvironmentVar()
+    .then((res) => {
+      console.log("getting ENV in orderDetails", res);
+      this.setState({
+        envUrl: res,
+      });
+     
+        API.create(res);
+    })
+    .catch((err) => {
+      console.log("IN error", err);
+    });
+
     this.props.navigation.setParams({submitReceiptAlert: this._submitReceiptAlert})
-    console.tron.log("Component Did mount");
+    console.log("Component Did mount");
     this.getDBGrnPO();
     this.getCreateReceipts();
   }
@@ -88,7 +104,7 @@ class GrnPurchaseOrderDetails extends Component {
       }
     }
 
-    console.tron.log("Print Count:", count)
+    console.log("Print Count:", count)
     this.setState({
       totalCount:count
     });
@@ -99,14 +115,14 @@ class GrnPurchaseOrderDetails extends Component {
     let dbPurchaseOrders = await DBGrnPurchaseOrderDataHelper.getPOByOrderNumber(
       this.state.entityPurchaseOrder.order_number
     );
-    console.tron.log("DB rrrr: ", dbPurchaseOrders);
+    console.log("DB rrrr: ", dbPurchaseOrders);
 
     dbPurchaseOrders.map((orderLine) => {
       if (orderLine.quantity_available_to_receive > 0 ){
         this.state.filteredOrderLines.push(orderLine)
       }
     })
-    console.tron.log("filteredOrderLines: ", this.state.filteredOrderLines);
+    console.log("filteredOrderLines: ", this.state.filteredOrderLines);
 
    this.setState({
       dataObjects: this.state.filteredOrderLines
@@ -120,7 +136,7 @@ class GrnPurchaseOrderDetails extends Component {
     let dbCreateReceipts = await DBGrnPurchaseOrderDataHelper.getCreateReceipts(
       this.state.entityPurchaseOrder.order_number
     );
-    console.tron.log("createReceipts retrieved from DB: ", dbCreateReceipts,this.state.entityPurchaseOrder.order_number);
+    console.log("createReceipts retrieved from DB: ", dbCreateReceipts,this.state.entityPurchaseOrder.order_number);
 
     this.setState({
       createReceiptObjects: dbCreateReceipts
@@ -214,7 +230,7 @@ class GrnPurchaseOrderDetails extends Component {
     }else {
       Alert.alert(
         "",
-        "Please create atleast one receipt to submit.",
+        "Please create at least one receipt to submit.",
         [
           { text: "OK"}
         ],
@@ -228,7 +244,7 @@ class GrnPurchaseOrderDetails extends Component {
     this.setState({isLoading: true});
 
     this.getCreateReceipts();
-    console.tron.log("Print Create Receipts: ", this.state.createReceiptObjects)
+    console.log("Print Create Receipts: ", this.state.createReceiptObjects)
 
     if (this.state.createReceiptObjects != null) {
 
@@ -237,18 +253,19 @@ class GrnPurchaseOrderDetails extends Component {
       let entity = this.state.createReceiptObjects[i];
 
         if (entity.photoURL != null && entity.photoURL != ""){
-          console.tron.log("PRINT PHOTOURL: ", entity.photoURL)
+          console.log("PRINT PHOTOURL: ", entity.photoURL)
             let source = {
               uri: entity.photoURL
             };
             this.photoURL = entity.photoURL
             this.data = new FormData();
             this.data.append('photo', {
-              uri: source,
+              uri: entity.photoURL,
               type: 'image/jpeg', // or photo.type
               name: 'testPhotoName'
             });
 
+            // API.create(this.state.envUrl);
             //send file API : upload image
             this.uploadImage(entity.id)
 
@@ -258,7 +275,7 @@ class GrnPurchaseOrderDetails extends Component {
         }
       }
     }else {
-        console.tron.log("No Create Receipt in DB");
+        console.log("No Create Receipt in DB");
   }
 }
 
@@ -269,14 +286,14 @@ class GrnPurchaseOrderDetails extends Component {
   }
 
   async postCreateReceipt() {
-    console.tron.log("Did Enter Post Create Receipt ")
+    console.log("Did Enter Post Create Receipt ")
     this.setState({isLoading: true});
 
     for (let i = 0; i < this.state.createReceiptObjects.length; i++) {
 
     let entity = this.state.createReceiptObjects[i];
 
-    console.tron.log(entity.order_line_number, entity.distribution_number)
+    console.log(entity.order_line_number, entity.distribution_number)
     await DBGrnPurchaseOrderDataHelper.updateCreateReceiptStatus(
       entity.order_number,
       entity.distribution_number,
@@ -289,7 +306,7 @@ class GrnPurchaseOrderDetails extends Component {
     }
 
 
-    console.tron.log(" updated Receipts To Post ",this.state.createReceiptObjects);
+    console.log(" updated Receipts To Post ",this.state.createReceiptObjects);
 
     const username = await Utils.retrieveDataFromAsyncStorage("USER_NAME");
     const response = await CreateReceiptsAPIHelper.postCreateReceipt(username,this.state.createReceiptObjects);
@@ -298,12 +315,12 @@ class GrnPurchaseOrderDetails extends Component {
 
     setTimeout(() => {
       if (response.ok) {
-        console.tron.log("Print Receipts",this.state.createReceiptObjects);
-        console.tron.log("Response API ok: ", response.data);
+        console.log("Print Receipts",this.state.createReceiptObjects);
+        console.log("Response API ok: ", response.data);
         this.submitSuccessfulAlert();
 
       } else {
-        console.tron.log("Response API: failed", response.status + " - " + response.problem);
+        console.log("Response API: failed", response.status + " - " + response.problem);
         this.submitFailedAlert();
       }
     }, 100);
@@ -320,19 +337,18 @@ class GrnPurchaseOrderDetails extends Component {
   async uploadImage(entityID) {
 
     this.setState({isLoading: true});
-    console.tron.log("Image data", this.data);
+    console.log("Image data", this.data);
     const username = await Utils.retrieveDataFromAsyncStorage("USER_NAME");
     const params = [username, 'testPhotoName', this.data];
     let result = await this.api["postPhoto"].apply(this, params)
 
     this.setState({isLoading: false});
-
     setTimeout(async () => {
 
       if (result.ok) {
-        console.tron.log("Response API ok: ", result.data);
+        console.log("Response API ok: ", result.data);
         this.file_id = result.data.REQUEST_ID;
-        console.tron.log("API Response:", entityID, this.data, this.photoURL)
+        console.log("API Response:", entityID, this.data, this.photoURL)
 
         //update file id to local
        await this.updateCreateReceiptFile(entityID, this.file_id);
@@ -341,7 +357,7 @@ class GrnPurchaseOrderDetails extends Component {
        this.counterToCallCreateReceiptsAPI(this.state.currentNoOfReceiptsToPost, this.state.createReceiptObjects.length)
 
       } else {
-        console.tron.log("Response API: failed", result.status + " - " + result.problem);
+        console.log("Response API: failed", result.status + " - " + result.problem);
 
       }
     }, 100)
@@ -361,7 +377,7 @@ class GrnPurchaseOrderDetails extends Component {
     if (this.state.entireReceipts.length > 0){
 
         await this.state.entireReceipts.map(async (item) => {
-            console.tron.log("Submite Status: ", item.submitStatus)
+            console.log("Submite Status: ", item.submitStatus)
           // Convert quantity string to number
           var quantityNum = parseFloat(item.quantity_available_to_receive);
 
@@ -430,7 +446,8 @@ class GrnPurchaseOrderDetails extends Component {
               entityPurchaseOrder: item,
               index: index,
               returnData:this.returnData.bind(this),
-              refreshStatus: this.refreshStatus.bind(this)
+              refreshStatus: this.refreshStatus.bind(this),
+              envUrl:this.state.envUrl
             });
           }}>
           <View>
@@ -473,7 +490,9 @@ class GrnPurchaseOrderDetails extends Component {
               entityPurchaseOrder: item,
               index: index,
               returnData:this.returnData.bind(this),
-              refreshStatus: this.refreshStatus.bind(this)
+              refreshStatus: this.refreshStatus.bind(this),
+              envUrl:this.state.envUrl
+
             });
           }}>
           <View>
@@ -517,7 +536,9 @@ class GrnPurchaseOrderDetails extends Component {
             entityPurchaseOrder: item,
             index: index,
             returnData:this.returnData.bind(this),
-            refreshStatus: this.refreshStatus.bind(this)
+            refreshStatus: this.refreshStatus.bind(this),
+            envUrl:this.state.envUrl
+
           });
         }}>
         <View>
@@ -562,7 +583,9 @@ class GrnPurchaseOrderDetails extends Component {
             entityPurchaseOrder: item,
             index: index,
             returnData:this.returnData.bind(this),
-            refreshStatus: this.refreshStatus.bind(this)
+            refreshStatus: this.refreshStatus.bind(this),
+            envUrl:this.state.envUrl
+
           });
         }}
       >
@@ -606,7 +629,9 @@ class GrnPurchaseOrderDetails extends Component {
               entityPurchaseOrder: item,
               index: index,
               returnData:this.returnData.bind(this),
-              refreshStatus: this.refreshStatus.bind(this)
+              refreshStatus: this.refreshStatus.bind(this),
+              envUrl:this.state.envUrl
+
             });
           }}
         >
@@ -650,7 +675,9 @@ class GrnPurchaseOrderDetails extends Component {
               entityPurchaseOrder: item,
               index: index,
               returnData:this.returnData.bind(this),
-              refreshStatus: this.refreshStatus.bind(this)
+              refreshStatus: this.refreshStatus.bind(this),
+              envUrl:this.state.envUrl
+
             });
           }}
         >

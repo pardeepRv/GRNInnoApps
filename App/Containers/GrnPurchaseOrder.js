@@ -56,7 +56,6 @@ class GrnPurchaseOrder extends React.PureComponent {
 
   // MARK: Api
   async getPurchaseOrderApi() {
-    debugger
     this.setState({
       isLoading: false,
     });
@@ -105,10 +104,10 @@ class GrnPurchaseOrder extends React.PureComponent {
     console.log("New ENV URL PO WORKING??? ", envURL);
 
     const username = await Utils.retrieveDataFromAsyncStorage("USER_NAME");
-    console.log(username,'username is storage>>>>');
+    console.log(username, "username is storage>>>>");
     const response = await api.getPurchaseOrders(username);
     const purchaseOrders = response.data.items;
-    console.log("Purchase Orders: ", purchaseOrders);
+    console.log("Purchase Orders first>>>: ", purchaseOrders);
 
     // Save to DB
     // await DBGrnPurchaseOrderDataHelper.savePurchaseOrders(purchaseOrders);
@@ -138,9 +137,9 @@ class GrnPurchaseOrder extends React.PureComponent {
     //   const purchaseOrders = response.data.items;
     //  console.log("PurchaseOrders: ", purchaseOrders);
     //
-    //   // Save to DB
-    //   await DBGrnPurchaseOrderDataHelper.savePurchaseOrders(purchaseOrders);
-    //
+    // Save to DB
+    // await DBGrnPurchaseOrderDataHelper.savePurchaseOrders(purchaseOrders);
+
     //   await this.getAllDBGrnPurchaseOrder(purchaseOrders);
     // }, 100)
   }
@@ -181,9 +180,16 @@ class GrnPurchaseOrder extends React.PureComponent {
     }
 
     // bind data to array of display
-    this.setState({
-      dataObjects: this.state.finalPOToDisplay,
-    });
+    this.setState(
+      {
+        dataObjects: this.state.finalPOToDisplay,
+      },
+      async () => {
+        await DBGrnPurchaseOrderDataHelper.savePurchaseOrders(
+          ordersGettingFromApi
+        );
+      }
+    );
   }
 
   async getDBGrnPurchaseOrder() {
