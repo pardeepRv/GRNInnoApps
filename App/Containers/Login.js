@@ -42,13 +42,13 @@ class Login extends Component {
       // password: "D3v3l0PmenT1",
       // environment: "PDEV2",
 
-      // username: "PROC_EMP",
-      // password: "Skanska123",
-      // environment: "SKAD3",
+      username: "PROC_EMP",
+      password: "Skanska123",
+      environment: "SKAD3",
 
-       username: "Products.User",
-      password: "Welcome41",
-      environment: "PDEV2",
+      //  username: "Products.User",
+      // password: "Welcome41",
+      // environment: "PDEV2",
 
       // username: "",
       // password: "",

@@ -4,7 +4,7 @@ import Utils from "../Utils/Utils";
 let DBGrnReceiptDataHelper = {
 
   async saveReceipts(receipts) {
-
+debugger
     let dbReceipts = await this.getAllReceipts();
     DB.write(() =>{
       DB.delete(dbReceipts);
